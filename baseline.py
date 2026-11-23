@@ -35,13 +35,26 @@ def lcs3(a, b, c):
     return "".join(reversed(out))
 
 def first_try(S):
+    # This algorithm turns out to be flawed as it only examines one pair of split points
     n = len(S)
     i, j = n // 3, 2 * n // 3
     X = lcs3(S[:i], S[i:j], S[j:])
     return X * 3
 
+def baseline_split(S):
+    n = len(S)
+    best = ""
+    for i in range(n + 1):
+        for j in range(i, n + 1):
+            X = lcs3(S[:i], S[i:j], S[j:])
+            if len(X) > len(best):
+                best = X
+    return best * 3
+
 tests = ["aaabbbccc", "atcgtatgcatgca"]
 for S in tests:
     first = first_try(S)
+    second = baseline_split(S)
     print(f"S = {S}")
     print(f" fixed thirds : {first!r} (length {len(first)})")
+    print(f" baseline : {second!r} (length {len(second)})")
