@@ -31,7 +31,7 @@ def lcs3(a, b, c):
         elif dp[x][y-1][z] == cur:
             y -= 1
         else:
-            x -= 1
+            z -= 1
     return "".join(reversed(out))
 
 def first_try(S):
