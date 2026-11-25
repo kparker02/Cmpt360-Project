@@ -51,7 +51,7 @@ def baseline_split(S):
                 best = X
     return best * 3
 
-tests = ["aaabbbccc", "atcgtatgcatgca"]
+tests = ["aaabbbccc", "atcgtatgcatgca", "abcabcab", "abcabcabcxyzxyzxyz", "aaa"]
 for S in tests:
     first = first_try(S)
     second = baseline_split(S)
