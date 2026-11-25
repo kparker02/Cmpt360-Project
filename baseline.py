@@ -1,4 +1,15 @@
 # Kyle Parker, kyp424, 11279181
+import sys
+from itertools import product
+from collections import Counter
+
+def fits(S, X):
+    pos = -1
+    for ch in X * 3:
+        pos = S.find(ch, pos + 1)
+        if pos < 0:
+            return False
+    return True
 
 
 """
@@ -41,20 +52,36 @@ def first_try(S):
     X = lcs3(S[:i], S[i:j], S[j:])
     return X * 3
 
-def baseline_split(S):
-    n = len(S)
-    best = ""
-    for i in range(n + 1):
-        for j in range(i, n + 1):
-            X = lcs3(S[:i], S[i:j], S[j:])
-            if len(X) > len(best):
-                best = X
-    return best * 3
+def baseline(S, stats=None):
+    cnt = Counter(S)
+    alphabet = sorted(ch for ch, c in cnt.items() if c >= 3)
+    m = len(S) // 3
+    checked = 0
+
+    result = ""
+    if alphabet:
+        found = False
+        for L in range(m, 0, -1):
+            for tup in product(alphabet, repeat=L):
+                checked += 1
+                X = "".join(tup)
+                if fits(S, X):
+                    result = X * 3
+                    found = True
+                    break
+            if found:
+                break
+    if stats is not None:
+        stats["checked"] = checked
+        stats["sigma_prime"] = len(alphabet)
+        stats["m"] = m
+    return result
+    
 
 tests = ["aaabbbccc", "atcgtatgcatgca", "abcabcab", "abcabcabcxyzxyzxyz", "aaa"]
 for S in tests:
     first = first_try(S)
-    second = baseline_split(S)
+    second = baseline(S)
     print(f"S = {S}")
     print(f" fixed thirds : {first!r} (length {len(first)})")
     print(f" baseline : {second!r} (length {len(second)})")
