@@ -83,5 +83,5 @@ for S in tests:
     first = first_try(S)
     second = baseline(S)
     print(f"S = {S}")
-    print(f" fixed thirds : {first!r} (length {len(first)})")
+    print(f" first try : {first!r} (length {len(first)})")
     print(f" baseline : {second!r} (length {len(second)})")
