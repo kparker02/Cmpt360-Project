@@ -1,7 +1,7 @@
 # Kyle Parker, kyp424, 11279181
-import sys
 from itertools import product
 from collections import Counter
+
 
 def fits(S, X):
     pos = -1
@@ -10,6 +10,32 @@ def fits(S, X):
         if pos < 0:
             return False
     return True
+
+
+def baseline(S, stats=None):
+    cnt = Counter(S)
+    alphabet = sorted(ch for ch, c in cnt.items() if c >= 3)
+    m = len(S) // 3
+    checked = 0
+
+    result = ""
+    if alphabet:
+        found = False
+        for L in range(m, 0, -1):
+            for tup in product(alphabet, repeat=L):
+                checked += 1
+                X = "".join(tup)
+                if fits(S, X):
+                    result = X * 3
+                    found = True
+                    break
+            if found:
+                break
+    if stats is not None:
+        stats["checked"] = checked
+        stats["sigma_prime"] = len(alphabet)
+        stats["m"] = m
+    return result
 
 
 """
@@ -45,37 +71,13 @@ def lcs3(a, b, c):
             z -= 1
     return "".join(reversed(out))
 
+
 def first_try(S):
     # This algorithm turns out to be flawed as it only examines one pair of split points
     n = len(S)
     i, j = n // 3, 2 * n // 3
     X = lcs3(S[:i], S[i:j], S[j:])
     return X * 3
-
-def baseline(S, stats=None):
-    cnt = Counter(S)
-    alphabet = sorted(ch for ch, c in cnt.items() if c >= 3)
-    m = len(S) // 3
-    checked = 0
-
-    result = ""
-    if alphabet:
-        found = False
-        for L in range(m, 0, -1):
-            for tup in product(alphabet, repeat=L):
-                checked += 1
-                X = "".join(tup)
-                if fits(S, X):
-                    result = X * 3
-                    found = True
-                    break
-            if found:
-                break
-    if stats is not None:
-        stats["checked"] = checked
-        stats["sigma_prime"] = len(alphabet)
-        stats["m"] = m
-    return result
 
 
 tests = ["aaabbbccc", "atcgtatgcatgca", "abcabcab", "abcabcabcxyzxyzxyz", "aaa"]
