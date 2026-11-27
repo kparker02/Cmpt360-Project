@@ -1,4 +1,6 @@
+# Kyle Parker, kyp424, 11279181
 
+from collections import Counter
 """
 Same lcs3 as original attempt
 """
@@ -32,6 +34,33 @@ def lcs3(a, b, c):
             z -= 1
     return "".join(reversed(out))
 
+
+def lcs3_length(a, b, c):
+    """Length of the 3-way LCS using two rolling layers over a."""
+    lb, lc = len(b), len(c)
+    prev = [[0] * (lc + 1) for _ in range(lb + 1)]
+    for ch in a:
+        cur = [[0] * (lc + 1) for _ in range(lb + 1)]
+        for y in range(1, lb + 1):
+            by = b[y - 1]
+            p_y, p_ym = prev[y], prev[y - 1]
+            c_y, c_ym = cur[y], cur[y - 1]
+            for z in range(1, lc + 1):
+                if ch == by == c[z - 1]:
+                    c_y[z] = p_ym[z - 1] + 1
+                else:
+                    v = p_y[z]
+                    w = c_ym[z]
+                    if w > v:
+                        v = w
+                    w = c_y[z - 1]
+                    if w > v:
+                        v = w
+                    c_y[z] = v
+        prev = cur
+    return prev[lb][lc]
+
+
 def faster(S):
     n = len(S)
     best = ""
@@ -43,8 +72,53 @@ def faster(S):
     return best * 3
 
 
+def fastest(S):
+    cnt = Counter(S)
+    T = "".join(ch for ch in S if cnt[ch] >= 3)
+    n = len(T)
+    if n < 3:
+        return ""
+    syms = sorted(set(T))
+
+    pre = {s: [0] * (n + 1) for s in syms}
+    for k, ch in enumerate(T):
+        for s in syms:
+            pre[s][k + 1] = pre[s][k] + (1 if s == ch else 0)
+
+    cand = []
+    for i in range(1, n):
+        for j in range(i + 1, n):
+            u = 0
+            for s in syms:
+                p = pre[s]
+                u += min(p[i], p[j] - p[i], p[n] - p[j])
+            if u > 0:
+                cand.append((-u, i, j))
+    cand.sort()
+
+    best, best_split = 0, None
+    for neg_u, i, j, in cand:
+        if -neg_u <= best:
+            break
+        allowed = { s for s in syms
+                   if min(pre[s][i], pre[s][j] - pre[s][i],
+                          pre[s][n] - pre[s][j]) > 0}
+        A = [ch for ch in T[:i] if ch in allowed]
+        B = [ch for ch in T[i:j] if ch in allowed]
+        C = [ch for ch in T[j:] if ch in allowed]
+        L = lcs3_length(A, B, C)
+        if L > best:
+            best, best_split = L, (A, B, C)
+
+    if best_split is None:
+        return ""
+    return lcs3(*best_split) * 3
+
+
 tests = ["aaabbbccc", "atcgtatgcatgca", "abcabcab", "abcabcabcxyzxyzxyz", "aaa"]
 for S in tests:
-    fast = faster(S)
+    fast1 = faster(S)
+    fast2 = fastest(S)
     print(f"S = {S}")
-    print(f" fixed thirds : {fast!r} (length {len(fast)})")
+    print(f" fixed thirds : {fast1!r} (length {len(fast1)})")
+    print(f" fixed thirds, pruning : {fast2!r} (length {len(fast2)})")

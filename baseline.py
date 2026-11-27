@@ -76,7 +76,7 @@ def baseline(S, stats=None):
         stats["sigma_prime"] = len(alphabet)
         stats["m"] = m
     return result
-    
+
 
 tests = ["aaabbbccc", "atcgtatgcatgca", "abcabcab", "abcabcabcxyzxyzxyz", "aaa"]
 for S in tests:
