@@ -2,7 +2,9 @@
 from itertools import product
 from collections import Counter
 
-
+"""
+Helper function used in baseline algorithm
+"""
 def fits(S, X):
     pos = -1
     for ch in X * 3:
@@ -12,6 +14,9 @@ def fits(S, X):
     return True
 
 
+"""
+Baseline Bruteforce algorithm to solve Longest Cubic Subsequence problem
+"""
 def baseline(S, stats=None):
     cnt = Counter(S)
     alphabet = sorted(ch for ch, c in cnt.items() if c >= 3)
@@ -72,6 +77,9 @@ def lcs3(a, b, c):
     return "".join(reversed(out))
 
 
+"""
+First Attempt which was flawed but used splits
+"""
 def first_try(S):
     # This algorithm turns out to be flawed as it only examines one pair of split points
     n = len(S)
@@ -80,10 +88,14 @@ def first_try(S):
     return X * 3
 
 
-tests = ["aaabbbccc", "atcgtatgcatgca", "abcabcab", "abcabcabcxyzxyzxyz", "aaa"]
-for S in tests:
-    first = first_try(S)
-    second = baseline(S)
-    print(f"S = {S}")
-    print(f" first try : {first!r} (length {len(first)})")
-    print(f" baseline : {second!r} (length {len(second)})")
+"""
+Base testing
+"""
+if __name__ == "__main__":
+    tests = ["aaabbbccc", "atcgtatgcatgca", "abcabcab", "abcabcabcxyzxyzxyz", "aaa"]
+    for S in tests:
+        first = first_try(S)
+        second = baseline(S)
+        print(f"S = {S}")
+        print(f" first try : {first!r} (length {len(first)})")
+        print(f" baseline : {second!r} (length {len(second)})")

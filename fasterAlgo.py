@@ -1,8 +1,10 @@
 # Kyle Parker, kyp424, 11279181
 
 from collections import Counter
+
+
 """
-Same lcs3 as original attempt
+Same lcs3 as original attempt, now used in fastest algorithm
 """
 def lcs3(a, b, c):
     "Returns the subsequence itself"
@@ -35,8 +37,10 @@ def lcs3(a, b, c):
     return "".join(reversed(out))
 
 
+"""
+Length of the 3-way LCS using two rolling layers over a
+"""
 def lcs3_length(a, b, c):
-    """Length of the 3-way LCS using two rolling layers over a."""
     lb, lc = len(b), len(c)
     prev = [[0] * (lc + 1) for _ in range(lb + 1)]
     for ch in a:
@@ -61,6 +65,11 @@ def lcs3_length(a, b, c):
     return prev[lb][lc]
 
 
+"""
+Attempt faster algorithm using dynamic programming and algorithm outlined in paper titled
+"The Longest Subsequence-Repeated Subsequence Problem",
+written by Manuel Lafond, Wenfeng Lai, Adiesha Liyanage and Binhai Zhu
+"""
 def faster(S):
     n = len(S)
     best = ""
@@ -72,6 +81,10 @@ def faster(S):
     return best * 3
 
 
+
+"""
+Improvement upon Dynamic programmed solution using pruning
+"""
 def fastest(S):
     cnt = Counter(S)
     T = "".join(ch for ch in S if cnt[ch] >= 3)
@@ -115,10 +128,15 @@ def fastest(S):
     return lcs3(*best_split) * 3
 
 
-tests = ["aaabbbccc", "atcgtatgcatgca", "abcabcab", "abcabcabcxyzxyzxyz", "aaa"]
-for S in tests:
-    fast1 = faster(S)
-    fast2 = fastest(S)
-    print(f"S = {S}")
-    print(f" fixed thirds : {fast1!r} (length {len(fast1)})")
-    print(f" fixed thirds, pruning : {fast2!r} (length {len(fast2)})")
+
+"""
+Base testing
+"""
+if __name__ == "__main__":
+    tests = ["aaabbbccc", "atcgtatgcatgca", "abcabcab", "abcabcabcxyzxyzxyz", "aaa"]
+    for S in tests:
+        fast1 = faster(S)
+        fast2 = fastest(S)
+        print(f"S = {S}")
+        print(f" fixed thirds : {fast1!r} (length {len(fast1)})")
+        print(f" fixed thirds, pruning : {fast2!r} (length {len(fast2)})")
